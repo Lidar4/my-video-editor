@@ -50,14 +50,17 @@ import {
   Video,
   WandSparkles,
   X,
+  UsersRound,
   ZoomIn,
 } from "lucide-react";
+import DirectorPanel from "@/components/studio/director-panel";
 
 const navItems = [
   ["Home", LayoutDashboard],
   ["Projects", FolderOpen],
   ["Assets", Layers3],
-  ["AI Studio", WandSparkles],
+  ["AI Director", WandSparkles],
+  ["Characters", UsersRound],
   ["Templates", Grid2X2],
   ["Render Queue", Archive],
 ] as const;
@@ -92,6 +95,7 @@ function SectionTitle({ eyebrow, title, action }: { eyebrow: string; title: stri
 export default function StudioApp() {
   const [activeNav, setActiveNav] = useState("AI Studio");
   const [copilotOpen, setCopilotOpen] = useState(true);
+  const [directorOpen, setDirectorOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [planReady, setPlanReady] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -124,7 +128,7 @@ export default function StudioApp() {
         <div className="workspace-switcher"><div className="workspace-avatar">M</div><div><small>Workspace</small><b>My creative space</b></div><ChevronDown size={15} /></div>
         <div className="nav-label">Workspace</div>
         <nav className="nav-list" aria-label="Main navigation">
-          {navItems.map(([label, Icon]) => <button key={label} type="button" onClick={() => setActiveNav(label)} className={`nav-item ${activeNav === label ? "selected" : ""}`}><Icon size={17} /><span>{label}</span>{label === "Render Queue" && <em>2</em>}</button>)}
+          {navItems.map(([label, Icon]) => <button key={label} type="button" onClick={() => { setActiveNav(label); if (label === "AI Director") setDirectorOpen(true); }} className={`nav-item ${activeNav === label ? "selected" : ""}`}><Icon size={17} /><span>{label}</span>{label === "Render Queue" && <em>2</em>}</button>)}
         </nav>
         <div className="sidebar-bottom"><div className="storage-card"><div className="storage-top"><span>Local workspace</span><i /></div><b>Media storage</b><div className="storage-track"><span /></div><small>1.2 GB of 5 GB used</small></div><button type="button" className="nav-item muted"><Settings2 size={17} /><span>Settings</span></button><button type="button" className="nav-item muted"><CircleHelp size={17} /><span>Help & shortcuts</span></button></div>
       </aside>
@@ -154,6 +158,7 @@ export default function StudioApp() {
 
       {rendering && <div className="render-toast"><div className="render-icon"><Clapperboard size={17} /></div><div><strong>Preparing your export</strong><span>Encoding timeline · {renderProgress}%</span></div><div className="render-progress"><i style={{ width: `${renderProgress}%` }} /></div></div>}
       <button type="button" className="floating-upload" onClick={() => setShowUpload(true)}><Plus size={17} /> Import media</button>
+      {directorOpen && <DirectorPanel onClose={() => { setDirectorOpen(false); setActiveNav("AI Director"); }} />}
     </main>
   );
 }
