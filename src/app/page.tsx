@@ -1,5 +1,5 @@
-import StudioApp from "@/components/studio/studio-app";
+import AuthGate from "@/components/auth/auth-gate";
 
 export default function Page() {
-  return <StudioApp />;
+  return <AuthGate />;
 }

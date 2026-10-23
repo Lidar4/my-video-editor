@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
 import {
   Archive,
   ArrowDown,
@@ -25,6 +26,7 @@ import {
   LayoutDashboard,
   Lightbulb,
   Lock,
+  LogOut,
   Menu,
   Mic2,
   MonitorPlay,
@@ -54,6 +56,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import DirectorPanel from "@/components/studio/director-panel";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 
 const navItems = [
   ["Home", LayoutDashboard],
@@ -92,7 +95,7 @@ function SectionTitle({ eyebrow, title, action }: { eyebrow: string; title: stri
   return <div className="section-heading"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div>{action}</div>;
 }
 
-export default function StudioApp() {
+export default function StudioApp({ session }: { session?: Session }) {
   const [activeNav, setActiveNav] = useState("AI Studio");
   const [copilotOpen, setCopilotOpen] = useState(true);
   const [directorOpen, setDirectorOpen] = useState(false);
@@ -134,7 +137,7 @@ export default function StudioApp() {
       </aside>
 
       <section className="app-column">
-        <header className="topbar"><div className="topbar-left"><IconButton label="Open menu"><Menu size={18} /></IconButton><div className="breadcrumb"><Lock size={13} /><span>Personal</span><ChevronRight size={12} /><strong>Anime world / 60s story</strong></div><span className="saved"><Check size={13} /> Saved</span></div><div className="topbar-right"><button type="button" className="ghost-button"><Undo2 size={15} /> <span className="hide-mobile">Undo</span></button><button type="button" className="ghost-button"><Redo2 size={15} /> <span className="hide-mobile">Redo</span></button><button type="button" className="ghost-button"><Bell size={16} /></button><button type="button" className="copilot-trigger" onClick={() => setCopilotOpen((current) => !current)}><WandSparkles size={15} /> AI Copilot</button><button type="button" className="export-button" onClick={handleRender}><Download size={15} /> Export</button></div></header>
+          <header className="topbar"><div className="topbar-left"><IconButton label="Open menu"><Menu size={18} /></IconButton><div className="breadcrumb"><Lock size={13} /><span>Personal</span><ChevronRight size={12} /><strong>Anime world / 60s story</strong></div><span className="saved"><Check size={13} /> Saved</span></div><div className="topbar-right"><button type="button" className="ghost-button"><Undo2 size={15} /> <span className="hide-mobile">Undo</span></button><button type="button" className="ghost-button"><Redo2 size={15} /> <span className="hide-mobile">Redo</span></button><button type="button" className="ghost-button"><Bell size={16} /></button><button type="button" className="ghost-button" title={session?.user.email ?? "Preview mode"} onClick={() => { if (session) void getSupabaseBrowserClient()?.auth.signOut(); }}><LogOut size={16} /></button><button type="button" className="copilot-trigger" onClick={() => setCopilotOpen((current) => !current)}><WandSparkles size={15} /> AI Copilot</button><button type="button" className="export-button" onClick={handleRender}><Download size={15} /> Export</button></div></header>
 
         <div className="editor-body">
           <div className="tool-rail"><div className="tool-rail-label">Tools</div>{editorTools.map(([label, Icon]) => <button type="button" key={label} onClick={() => setSelectedTool(label)} className={`tool-item ${selectedTool === label ? "active" : ""}`}><Icon size={17} /><span>{label}</span></button>)}</div>

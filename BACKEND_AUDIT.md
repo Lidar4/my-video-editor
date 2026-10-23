@@ -40,6 +40,8 @@ The AI Director already presents a structured local plan preview and marks provi
 
 Netlify is serving the current static export successfully over HTTPS. The deployment has no Netlify Functions, Edge Functions, redirects or header rules. This is compatible with a frontend-only phase, but not sufficient for authentication callbacks, private file authorization, provider secrets, FFmpeg processing or long-running render jobs. Netlify can remain the frontend host while Supabase and a separate worker provide backend capabilities.
 
+The static frontend now includes a browser-safe Supabase client and an authentication gate. When public Supabase configuration is absent, it explicitly remains in preview mode. When configuration is present, it supports sign up, sign in, sign out, session restoration, auth-state changes and password-reset requests. Live authentication has not been end-to-end tested in this environment because no Supabase project credentials are connected.
+
 ## Recommended data model
 
 Use PostgreSQL UUID primary keys and timestamps with server defaults. Every tenant-owned row should carry a `workspace_id` and be protected by RLS. Do not trust a workspace or user ID supplied by the browser; derive identity from the authenticated Supabase JWT inside policies and server functions.
@@ -104,7 +106,7 @@ Add schema types and runtime validation with Zod; add Supabase browser/server cl
 
 ### Phase 2 — authenticated project persistence
 
-Add Supabase Auth UI, workspace bootstrap, project create/load/save, revision snapshots and recovery. Replace sample project title/status with database-backed state. Add optimistic revision checks so two tabs do not silently overwrite each other.
+The first implementation slice is now present: Supabase Auth UI, session restore, secure workspace-bootstrap RPC invocation, typed project snapshot validation, an atomic `save_project_revision` RPC contract and a debounced autosave controller with explicit saved/failed/conflict states. Full project-list/editor wiring and live persistence remain pending until a Supabase project is connected.
 
 ### Phase 3 — secure media lifecycle
 
@@ -128,8 +130,15 @@ Add unit, integration, RLS/security and browser tests; structured logging and er
 
 ## Credentials and missing setup
 
-No Supabase project, database URL, anon key, service-role key, storage bucket, provider key, queue endpoint or worker deployment is present in the repository. These must be connected through secure environment configuration before real backend functionality can be claimed. The service-role key must never be added to the frontend or committed to Git.
+No Supabase project, database URL, public key, service-role key, storage bucket, provider key, queue endpoint or worker deployment is present in the repository. These must be connected through secure environment configuration before live backend functionality can be claimed. The service-role key must never be added to the frontend or committed to Git.
 
 ## Audit conclusion
 
-The current UI foundation is a useful frontend milestone, but backend work is substantially outstanding. Phase 1 has now been started safely: validated TypeScript domain contracts, an environment-aware backend status boundary, a Supabase/PostgreSQL schema migration and RLS policy draft are present in the branch. The migration has not been applied because no Supabase project or credentials are connected. Real authentication, persistence, uploads, AI generation and rendering must remain incomplete until credentials are connected and each flow has an end-to-end test.
+The current UI foundation is a useful frontend milestone, but backend work is substantially outstanding. The branch now contains the Phase 1 contract and a client-side authentication/persistence foundation: validated TypeScript domain contracts, a browser-safe Supabase client, auth UI, environment-aware capability status, two ordered Supabase migrations, atomic revision-save and workspace-bootstrap RPCs, a debounced autosave controller, setup documentation and unit tests. The migrations have not been applied because no Supabase project or credentials are connected. Real authenticated project persistence, uploads, AI generation and rendering must remain incomplete until credentials are connected and each flow has an end-to-end test.
+
+## Current validation
+
+- `pnpm typecheck`: passes.
+- `pnpm test`: passes — 7 tests across 2 files.
+- `pnpm build`: passes — static routes `/` and `/_not-found` generated.
+- Supabase migration execution and RLS integration tests: not run; no project credentials are configured.
