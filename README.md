@@ -24,6 +24,10 @@ The branch now includes a browser-safe Supabase client, authentication gate, Zod
 
 See [BACKEND_AUDIT.md](./BACKEND_AUDIT.md) for the current production boundary, security review and remaining phases.
 
+## Free Story Lab
+
+The editor now includes a zero-API-cost `Story Lab` workflow. Open it from the left navigation, choose a JPG/PNG/WebP reference image, write a Bengali or English scene prompt, select duration and aspect ratio, preview the cinematic camera move and download a WebM generated in the browser. This is a local photo animation rather than provider-backed AI video generation, so it works without buying an API key and does not pretend that a mock render is an AI result.
+
 ## Run locally
 
 ```bash

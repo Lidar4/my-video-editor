@@ -42,6 +42,8 @@ Netlify is serving the current static export successfully over HTTPS. The deploy
 
 The static frontend now includes a browser-safe Supabase client and an authentication gate. When public Supabase configuration is absent, it explicitly remains in preview mode. When configuration is present, it supports sign up, sign in, sign out, session restoration, auth-state changes and password-reset requests. Live authentication has not been end-to-end tested in this environment because no Supabase project credentials are connected.
 
+The free-first local Story Lab is now implemented. It accepts a local image, Bengali or English prompt, duration and aspect ratio; derives a transparent local scene recipe; previews a slow cinematic camera move; and exports a browser-generated WebM without an API key. This is a deterministic photo animation, not a claim of AI image-to-video generation. It keeps the project useful at zero API cost while the provider/worker boundary remains unavailable.
+
 ## Recommended data model
 
 Use PostgreSQL UUID primary keys and timestamps with server defaults. Every tenant-owned row should carry a `workspace_id` and be protected by RLS. Do not trust a workspace or user ID supplied by the browser; derive identity from the authenticated Supabase JWT inside policies and server functions.
@@ -111,6 +113,8 @@ The first implementation slice is now present: Supabase Auth UI, session restore
 ### Phase 3 — secure media lifecycle
 
 Add signed upload sessions, private storage buckets, MIME/size validation, upload completion, metadata extraction, thumbnails and cleanup. Connect the import modal to real asset rows and signed playback URLs.
+
+The zero-cost browser path now exists separately in Story Lab: local image validation and browser WebM export. Cloud media storage and signed URLs remain pending until Supabase is configured.
 
 ### Phase 4 — editing contract
 
